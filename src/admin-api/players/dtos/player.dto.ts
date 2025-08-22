@@ -20,6 +20,10 @@ export class PlayerDto {
   @IsOptional()
   photoUrl: string;
 
+  @IsString({ message: 'Ссылка на аватар должна быть строкой' })
+  @IsOptional()
+  avatarUrl: string;
+
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
