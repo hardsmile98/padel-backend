@@ -6,6 +6,7 @@ export const players = pgTable('players', {
   firstName: varchar('first_name', { length: 255 }),
   lastName: varchar('last_name', { length: 255 }),
   raiting: numeric('raiting', { mode: 'number' }).default(null),
+  avatarUrl: varchar('avatar_url', { length: 500 }).default(null),
   photoUrl: varchar('photo_url', { length: 500 }).default(null),
   description: jsonb('description').$type<string[]>().default(null),
 });

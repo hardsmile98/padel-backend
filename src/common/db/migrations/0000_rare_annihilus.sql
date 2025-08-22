@@ -12,6 +12,7 @@ CREATE TABLE "players" (
 	"first_name" varchar(255),
 	"last_name" varchar(255),
 	"raiting" numeric DEFAULT null,
+	"avatar_url" varchar(500) DEFAULT null,
 	"photo_url" varchar(500) DEFAULT null,
 	"description" jsonb DEFAULT 'null'::jsonb,
 	CONSTRAINT "players_slug_unique" UNIQUE("slug")
