@@ -30,6 +30,9 @@ export const stages = pgTable('stages', {
 
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
+  tournamentId: integer('tournament_id')
+    .references(() => tournaments.id, { onDelete: 'cascade' })
+    .notNull(),
   stageId: integer('stage_id')
     .references(() => stages.id, { onDelete: 'cascade' })
     .notNull(),
@@ -44,6 +47,9 @@ export const categories = pgTable('categories', {
 
 export const groups = pgTable('groups', {
   id: serial('id').primaryKey(),
+  tournamentId: integer('tournament_id')
+    .references(() => tournaments.id, { onDelete: 'cascade' })
+    .notNull(),
   stageId: integer('stage_id')
     .references(() => stages.id, { onDelete: 'cascade' })
     .notNull(),
@@ -65,7 +71,6 @@ export const teams = pgTable('teams', {
   player2Id: integer('player2_id')
     .references(() => players.id, { onDelete: 'cascade' })
     .notNull(),
-  name: varchar('name', { length: 500 }).default(null),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -80,10 +85,7 @@ export const matches = pgTable('matches', {
   team2Id: integer('team2_id')
     .references(() => teams.id, { onDelete: 'cascade' })
     .notNull(),
-  sets: jsonb('sets')
-    .$type<{ team1: number; team2: number }[]>()
-    .default([])
-    .notNull(),
+  sets: jsonb('sets').default([]).notNull(),
   winnerId: integer('winner_id').references(() => teams.id, {
     onDelete: 'set null',
   }),

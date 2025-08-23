@@ -1,6 +1,14 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
-import { CreateStageDto, CreateTournamentDto, SetActiveStageDto } from './dtos';
+import {
+  AddMatchDto,
+  CreateCategoryDto,
+  CreateGroupDto,
+  CreateStageDto,
+  CreateTeamDto,
+  CreateTournamentDto,
+  SetActiveStageDto,
+} from './dtos';
 
 @Controller('tournaments')
 export class TournamentsController {
@@ -40,5 +48,64 @@ export class TournamentsController {
     @Body() createStageDto: CreateStageDto,
   ) {
     return this.tournamentsService.createStage(id, createStageDto);
+  }
+
+  @Post(':id/:stageId/create-category')
+  async createCategory(
+    @Param('id') id: string,
+    @Param('stageId') stageId: string,
+    @Body() createCategoryDto: CreateCategoryDto,
+  ) {
+    return this.tournamentsService.createCategory(
+      id,
+      stageId,
+      createCategoryDto,
+    );
+  }
+
+  @Post(':id/:stageId/:categoryId/create-group')
+  async createGroup(
+    @Param('id') id: string,
+    @Param('stageId') stageId: string,
+    @Param('categoryId') categoryId: string,
+    @Body() createGroupDto: CreateGroupDto,
+  ) {
+    return this.tournamentsService.createGroup(
+      id,
+      stageId,
+      categoryId,
+      createGroupDto,
+    );
+  }
+
+  @Get('groups/:groupId')
+  async getGroup(@Param('groupId') groupId: string) {
+    return this.tournamentsService.getGroup(groupId);
+  }
+
+  @Post('groups/:groupId/create-team')
+  async createTeam(
+    @Param('groupId') groupId: string,
+    @Body() createTeamDto: CreateTeamDto,
+  ) {
+    return this.tournamentsService.createTeam(groupId, createTeamDto);
+  }
+
+  @Post('teams/:teamId/delete')
+  async deleteTeam(@Param('teamId') teamId: string) {
+    return this.tournamentsService.deleteTeam(teamId);
+  }
+
+  @Post('groups/:groupId/create-match')
+  async addMatch(
+    @Param('groupId') groupId: string,
+    @Body() addMatchDto: AddMatchDto,
+  ) {
+    return this.tournamentsService.addMatch(groupId, addMatchDto);
+  }
+
+  @Post('matches/:matchId/delete')
+  async deleteMatch(@Param('matchId') matchId: string) {
+    return this.tournamentsService.deleteMatch(matchId);
   }
 }
