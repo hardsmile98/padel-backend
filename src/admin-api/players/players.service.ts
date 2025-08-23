@@ -1,7 +1,7 @@
 import { DbService } from '../../common/db';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PlayerDto } from './dtos';
-import { eq } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 import { players } from 'src/common/db/schema';
 
 @Injectable()
@@ -12,23 +12,50 @@ export class PlayersService {
     const player = await this.dbService.db
       .select()
       .from(players)
-      .where(eq(players.id, +id));
+      .where(and(eq(players.id, +id), isNull(players.deletedAt)));
+
     return player;
   }
 
   async getPlayers() {
-    const allPlayers = await this.dbService.db.select().from(players);
+    const activePlayers = await this.dbService.db
+      .select()
+      .from(players)
+      .where(isNull(players.deletedAt))
+      .orderBy(desc(players.createdAt));
 
-    return allPlayers;
+    return activePlayers;
   }
 
   async deletePlayer(id: string) {
-    await this.dbService.db.delete(players).where(eq(players.id, +id));
+    await this.dbService.db
+      .update(players)
+      .set({ deletedAt: new Date() })
+      .where(eq(players.id, +id));
 
     return { message: 'Игрок удален' };
   }
 
   async createPlayer(createPlayerDto: PlayerDto) {
+    const [player] = await this.dbService.db
+      .select()
+      .from(players)
+      .where(eq(players.slug, createPlayerDto.slug));
+
+    if (player) {
+      if (player.deletedAt !== null) {
+        const updatedPlayer = await this.dbService.db
+          .update(players)
+          .set({ ...createPlayerDto, deletedAt: null })
+          .where(eq(players.id, +player.id))
+          .returning();
+
+        return updatedPlayer;
+      } else {
+        throw new BadRequestException('Игрок с таким slug уже существует');
+      }
+    }
+
     const newPlayer = await this.dbService.db
       .insert(players)
       .values(createPlayerDto)

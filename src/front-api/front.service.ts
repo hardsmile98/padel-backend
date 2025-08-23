@@ -1,23 +1,27 @@
 import { DbService } from 'src/common/db';
 import { Injectable } from '@nestjs/common';
 import { players } from 'src/common/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 
 @Injectable()
 export class FrontService {
   constructor(private readonly dbService: DbService) {}
 
   async getPlayers() {
-    const allPlayers = await this.dbService.db.select().from(players);
+    const activePlayers = await this.dbService.db
+      .select()
+      .from(players)
+      .where(isNull(players.deletedAt))
+      .orderBy(desc(players.createdAt));
 
-    return allPlayers;
+    return activePlayers;
   }
 
   async getPlayerBySlug(slug: string) {
     const [player] = await this.dbService.db
       .select()
       .from(players)
-      .where(eq(players.slug, slug));
+      .where(and(eq(players.slug, slug), isNull(players.deletedAt)));
 
     return {
       player,

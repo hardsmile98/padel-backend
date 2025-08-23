@@ -1,4 +1,11 @@
-import { pgTable, serial, varchar, jsonb, numeric } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  varchar,
+  jsonb,
+  numeric,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 
 export const players = pgTable('players', {
   id: serial('id').primaryKey(),
@@ -9,6 +16,8 @@ export const players = pgTable('players', {
   avatarUrl: varchar('avatar_url', { length: 500 }).default(null),
   photoUrl: varchar('photo_url', { length: 500 }).default(null),
   description: jsonb('description').$type<string[]>().default(null),
+  deletedAt: timestamp('deleted_at').default(null),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export type Player = typeof players.$inferSelect;
