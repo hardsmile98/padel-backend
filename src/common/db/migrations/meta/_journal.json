@@ -5,78 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1755875767382,
-      "tag": "0000_rare_annihilus",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1755937847098,
-      "tag": "0001_panoramic_paper_doll",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1755939096357,
-      "tag": "0002_light_prowler",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1755941719064,
-      "tag": "0003_bent_patriot",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1755945028080,
-      "tag": "0004_steady_hex",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1755960257616,
-      "tag": "0005_stormy_unicorn",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1755960903662,
-      "tag": "0006_keen_quentin_quire",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1755978038263,
-      "tag": "0007_demonic_guardian",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1755978094411,
-      "tag": "0008_hot_molten_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1755978262121,
-      "tag": "0009_swift_sersi",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1755978409084,
-      "tag": "0010_modern_grey_gargoyle",
+      "when": 1755988497346,
+      "tag": "0000_thankful_black_knight",
       "breakpoints": true
     }
   ]

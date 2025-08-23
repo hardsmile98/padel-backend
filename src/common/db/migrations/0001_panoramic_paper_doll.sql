@@ -1,1 +1,0 @@
-ALTER TABLE "players" ADD COLUMN "deleted_at" timestamp DEFAULT null;
