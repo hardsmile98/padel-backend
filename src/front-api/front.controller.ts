@@ -16,4 +16,9 @@ export class FrontController {
   async getPlayerBySlug(@Param('slug') slug: string) {
     return this.frontService.getPlayerBySlug(slug);
   }
+
+  @Get('tournaments/players')
+  async getTournamentPlayers() {
+    return this.frontService.getTournamentPlayers();
+  }
 }
