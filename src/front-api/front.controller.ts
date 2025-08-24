@@ -21,4 +21,14 @@ export class FrontController {
   async getTournamentPlayers() {
     return this.frontService.getTournamentPlayers();
   }
+
+  @Get('tournaments/active')
+  async getActiveTournament() {
+    return this.frontService.getActiveTournament();
+  }
+
+  @Get('tournaments/groups/:groupId')
+  async getGroupStatistics(@Param('groupId') groupId: string) {
+    return this.frontService.getGroupStatistics(groupId);
+  }
 }

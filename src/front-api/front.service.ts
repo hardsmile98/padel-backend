@@ -1,10 +1,21 @@
 import { DbService } from 'src/common/db';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { groups, players, teams, tournaments } from 'src/common/db/schema';
-import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import {
+  categories,
+  groups,
+  players,
+  stages,
+  teams,
+  tournaments,
+} from 'src/common/db/schema';
+import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 
 @Injectable()
 export class FrontService {
+  getTournamentGroups() {
+    throw new Error('Method not implemented.');
+  }
   constructor(private readonly dbService: DbService) {}
 
   async getPlayers() {
@@ -137,5 +148,133 @@ export class FrontService {
       );
 
     return activePlayers;
+  }
+
+  async getActiveTournament() {
+    const [tournament] = await this.dbService.db
+      .select()
+      .from(tournaments)
+      .where(eq(tournaments.isActive, true));
+
+    const allStages = await this.dbService.db
+      .select()
+      .from(stages)
+      .where(eq(stages.tournamentId, tournament.id))
+      .orderBy(asc(stages.order));
+
+    const allCategories = await this.dbService.db
+      .select()
+      .from(categories)
+      .where(eq(categories.tournamentId, tournament.id))
+      .orderBy(asc(categories.order));
+
+    const allGroups = await this.dbService.db
+      .select()
+      .from(groups)
+      .where(eq(groups.tournamentId, tournament.id))
+      .orderBy(asc(groups.createdAt));
+
+    return {
+      tournament,
+      stages: allStages,
+      categories: allCategories,
+      groups: allGroups,
+    };
+  }
+
+  async getGroupStatistics(groupId: string) {
+    const [group] = await this.dbService.db
+      .select()
+      .from(groups)
+      .where(eq(groups.id, +groupId));
+
+    if (!group) {
+      throw new NotFoundException('Группа не найдена');
+    }
+
+    const player1 = alias(players, 'player1');
+    const player2 = alias(players, 'player2');
+
+    const allTeams = await this.dbService.db
+      .select({
+        id: teams.id,
+        player1Id: teams.player1Id,
+        player2Id: teams.player2Id,
+        player1: player1,
+        player2: player2,
+        createdAt: teams.createdAt,
+      })
+      .from(teams)
+      .where(eq(teams.groupId, group.id))
+      .innerJoin(player1, eq(teams.player1Id, player1.id))
+      .innerJoin(player2, eq(teams.player2Id, player2.id))
+      .orderBy(asc(teams.createdAt));
+
+    const { rows } = await this.dbService.db.execute(sql`
+      select
+        m.id as match_id,
+        m.group_id,
+        m.sets,
+        m.winner_id,
+        m.created_at,
+  
+        t1.id as team1_id,
+        p1.id as team1_p1_id, p1.first_name as team1_p1_first, p1.last_name as team1_p1_last,
+        p2.id as team1_p2_id, p2.first_name as team1_p2_first, p2.last_name as team1_p2_last,
+  
+        t2.id as team2_id,
+        p3.id as team2_p1_id, p3.first_name as team2_p1_first, p3.last_name as team2_p1_last,
+        p4.id as team2_p2_id, p4.first_name as team2_p2_first, p4.last_name as team2_p2_last
+  
+      from matches m
+      join teams t1 on m.team1_id = t1.id
+      join players p1 on t1.player1_id = p1.id
+      join players p2 on t1.player2_id = p2.id
+      join teams t2 on m.team2_id = t2.id
+      join players p3 on t2.player1_id = p3.id
+      join players p4 on t2.player2_id = p4.id
+      where m.group_id = ${group.id}
+      order by m.created_at asc
+    `);
+
+    const matches = rows.map((r) => ({
+      id: r.match_id,
+      groupId: r.group_id,
+      sets: r.sets,
+      winnerId: r.winner_id,
+      createdAt: r.created_at,
+      team1: {
+        id: r.team1_id,
+        player1: {
+          id: r.team1_p1_id,
+          firstName: r.team1_p1_first,
+          lastName: r.team1_p1_last,
+        },
+        player2: {
+          id: r.team1_p2_id,
+          firstName: r.team1_p2_first,
+          lastName: r.team1_p2_last,
+        },
+      },
+      team2: {
+        id: r.team2_id,
+        player1: {
+          id: r.team2_p1_id,
+          firstName: r.team2_p1_first,
+          lastName: r.team2_p1_last,
+        },
+        player2: {
+          id: r.team2_p2_id,
+          firstName: r.team2_p2_first,
+          lastName: r.team2_p2_last,
+        },
+      },
+    }));
+
+    return {
+      group,
+      matches,
+      teams: allTeams,
+    };
   }
 }
