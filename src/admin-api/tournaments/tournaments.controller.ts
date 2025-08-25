@@ -63,19 +63,13 @@ export class TournamentsController {
     );
   }
 
-  @Post(':id/:stageId/:categoryId/create-group')
+  @Post(':id/:stageId/create-group')
   async createGroup(
     @Param('id') id: string,
     @Param('stageId') stageId: string,
-    @Param('categoryId') categoryId: string,
     @Body() createGroupDto: CreateGroupDto,
   ) {
-    return this.tournamentsService.createGroup(
-      id,
-      stageId,
-      categoryId,
-      createGroupDto,
-    );
+    return this.tournamentsService.createGroup(id, stageId, createGroupDto);
   }
 
   @Get('groups/:groupId')

@@ -116,7 +116,6 @@ export class TournamentsService {
   async createGroup(
     id: string,
     stageId: string,
-    categoryId: string,
     createGroupDto: CreateGroupDto,
   ) {
     await this.dbService.db
@@ -125,7 +124,9 @@ export class TournamentsService {
         ...createGroupDto,
         tournamentId: +id,
         stageId: +stageId,
-        categoryId: +categoryId,
+        categoryId: createGroupDto.categoryId
+          ? +createGroupDto.categoryId
+          : null,
       })
       .execute();
 
