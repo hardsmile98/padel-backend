@@ -253,7 +253,7 @@ export class FrontService {
         p4.first_name as team2_p2_first,
         p4.last_name as team2_p2_last,
         p4.avatar_url as team2_p2_avatar,
-        p4.slug as team2_p2_slug,
+        p4.slug as team2_p2_slug
   
       from matches m
       join teams t1 on m.team1_id = t1.id
