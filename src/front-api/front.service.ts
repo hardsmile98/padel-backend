@@ -51,14 +51,23 @@ export class FrontService {
           p1.first_name as team1_p1_first,
           p1.last_name as team1_p1_last,
           p1.avatar_url as team1_p1_avatar,
+          p1.slug as team1_p1_slug,
           p2.id as team1_p2_id,
           p2.first_name as team1_p2_first,
           p2.last_name as team1_p2_last,
           p2.avatar_url as team1_p2_avatar,
+          p2.slug as team1_p2_slug,
     
           t2.id as team2_id,
-          p3.id as team2_p1_id, p3.first_name as team2_p1_first, p3.last_name as team2_p1_last,
-          p4.id as team2_p2_id, p4.first_name as team2_p2_first, p4.last_name as team2_p2_last
+          p3.id as team2_p1_id,
+          p3.first_name as team2_p1_first,
+          p3.last_name as team2_p1_last,
+          p3.slug as team2_p1_slug,
+          p4.id as team2_p2_id,
+          p4.first_name as team2_p2_first,
+          p4.last_name as team2_p2_last,
+          p4.avatar_url as team2_p2_avatar,
+          p4.slug as team2_p2_slug
     
         from matches m
         join teams t1 on m.team1_id = t1.id
@@ -84,12 +93,14 @@ export class FrontService {
           firstName: r.team1_p1_first,
           lastName: r.team1_p1_last,
           avatarUrl: r.team1_p1_avatar,
+          slug: r.team1_p1_slug,
         },
         player2: {
           id: r.team1_p2_id,
           firstName: r.team1_p2_first,
           lastName: r.team1_p2_last,
           avatarUrl: r.team1_p2_avatar,
+          slug: r.team1_p2_slug,
         },
       },
       team2: {
@@ -99,12 +110,14 @@ export class FrontService {
           firstName: r.team2_p1_first,
           lastName: r.team2_p1_last,
           avatarUrl: r.team2_p1_avatar,
+          slug: r.team2_p1_slug,
         },
         player2: {
           id: r.team2_p2_id,
           firstName: r.team2_p2_first,
           lastName: r.team2_p2_last,
           avatarUrl: r.team2_p2_avatar,
+          slug: r.team2_p2_slug,
         },
       },
     }));
@@ -219,12 +232,28 @@ export class FrontService {
         m.created_at,
   
         t1.id as team1_id,
-        p1.id as team1_p1_id, p1.first_name as team1_p1_first, p1.last_name as team1_p1_last,
-        p2.id as team1_p2_id, p2.first_name as team1_p2_first, p2.last_name as team1_p2_last,
+        p1.id as team1_p1_id,
+        p1.first_name as team1_p1_first,
+        p1.last_name as team1_p1_last,
+        p1.avatar_url as team1_p1_avatar,
+        p1.slug as team1_p1_slug,
+        p2.id as team1_p2_id,
+        p2.first_name as team1_p2_first,
+        p2.last_name as team1_p2_last,
+        p2.avatar_url as team1_p2_avatar,
+        p2.slug as team1_p2_slug,
   
         t2.id as team2_id,
-        p3.id as team2_p1_id, p3.first_name as team2_p1_first, p3.last_name as team2_p1_last,
-        p4.id as team2_p2_id, p4.first_name as team2_p2_first, p4.last_name as team2_p2_last
+        p3.id as team2_p1_id,
+        p3.first_name as team2_p1_first,
+        p3.last_name as team2_p1_last,
+        p3.avatar_url as team2_p1_avatar,
+        p3.slug as team2_p1_slug,
+        p4.id as team2_p2_id,
+        p4.first_name as team2_p2_first,
+        p4.last_name as team2_p2_last,
+        p4.avatar_url as team2_p2_avatar,
+        p4.slug as team2_p2_slug,
   
       from matches m
       join teams t1 on m.team1_id = t1.id
@@ -249,11 +278,15 @@ export class FrontService {
           id: r.team1_p1_id,
           firstName: r.team1_p1_first,
           lastName: r.team1_p1_last,
+          avatarUrl: r.team1_p1_avatar,
+          slug: r.team1_p1_slug,
         },
         player2: {
           id: r.team1_p2_id,
           firstName: r.team1_p2_first,
           lastName: r.team1_p2_last,
+          avatarUrl: r.team1_p2_avatar,
+          slug: r.team1_p2_slug,
         },
       },
       team2: {
@@ -262,11 +295,15 @@ export class FrontService {
           id: r.team2_p1_id,
           firstName: r.team2_p1_first,
           lastName: r.team2_p1_last,
+          avatarUrl: r.team2_p1_avatar,
+          slug: r.team2_p1_slug,
         },
         player2: {
           id: r.team2_p2_id,
           firstName: r.team2_p2_first,
           lastName: r.team2_p2_last,
+          avatarUrl: r.team2_p2_avatar,
+          slug: r.team2_p2_slug,
         },
       },
     }));
