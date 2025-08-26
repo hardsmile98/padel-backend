@@ -17,6 +17,7 @@ import {
   CreateTeamDto,
   CreateTournamentDto,
   SetActiveStageDto,
+  UpdateMatchDto,
 } from './dtos';
 import { asc, desc, eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
@@ -192,7 +193,29 @@ export class TournamentsService {
       .execute();
   }
 
+  async updateMatch(updateMatchDto: UpdateMatchDto) {
+    await this.dbService.db
+      .update(matches)
+      .set({ ...updateMatchDto })
+      .where(eq(matches.id, +updateMatchDto.matchId))
+      .execute();
+  }
+
   async deleteMatch(matchId: string) {
     await this.dbService.db.delete(matches).where(eq(matches.id, +matchId));
+  }
+
+  async deleteGroup(groupId: string) {
+    await this.dbService.db.delete(groups).where(eq(groups.id, +groupId));
+  }
+
+  async deleteCategory(categoryId: string) {
+    await this.dbService.db
+      .delete(categories)
+      .where(eq(categories.id, +categoryId));
+  }
+
+  async deleteStage(stageId: string) {
+    await this.dbService.db.delete(stages).where(eq(stages.id, +stageId));
   }
 }

@@ -5,3 +5,4 @@ export * from './create-category';
 export * from './create-group';
 export * from './create-team';
 export * from './create-match';
+export * from './update-match';

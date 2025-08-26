@@ -8,6 +8,7 @@ import {
   CreateTeamDto,
   CreateTournamentDto,
   SetActiveStageDto,
+  UpdateMatchDto,
 } from './dtos';
 
 @Controller('tournaments')
@@ -50,6 +51,11 @@ export class TournamentsController {
     return this.tournamentsService.createStage(id, createStageDto);
   }
 
+  @Post('stages/:stageId/delete')
+  async deleteStage(@Param('stageId') stageId: string) {
+    return this.tournamentsService.deleteStage(stageId);
+  }
+
   @Post(':id/:stageId/create-category')
   async createCategory(
     @Param('id') id: string,
@@ -63,6 +69,11 @@ export class TournamentsController {
     );
   }
 
+  @Post('categories/:categoryId/delete')
+  async deleteCategory(@Param('categoryId') categoryId: string) {
+    return this.tournamentsService.deleteCategory(categoryId);
+  }
+
   @Post(':id/:stageId/create-group')
   async createGroup(
     @Param('id') id: string,
@@ -70,6 +81,11 @@ export class TournamentsController {
     @Body() createGroupDto: CreateGroupDto,
   ) {
     return this.tournamentsService.createGroup(id, stageId, createGroupDto);
+  }
+
+  @Post('groups/:groupId/delete')
+  async deleteGroup(@Param('groupId') groupId: string) {
+    return this.tournamentsService.deleteGroup(groupId);
   }
 
   @Get('groups/:groupId')
@@ -96,6 +112,11 @@ export class TournamentsController {
     @Body() addMatchDto: AddMatchDto,
   ) {
     return this.tournamentsService.addMatch(groupId, addMatchDto);
+  }
+
+  @Post('matches/update')
+  async updateMatch(@Body() updateMatchDto: UpdateMatchDto) {
+    return this.tournamentsService.updateMatch(updateMatchDto);
   }
 
   @Post('matches/:matchId/delete')
