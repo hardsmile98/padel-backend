@@ -163,7 +163,7 @@ export class TournamentsService {
       .select()
       .from(matches)
       .where(eq(matches.groupId, +groupId))
-      .orderBy(asc(matches.createdAt));
+      .orderBy(desc(matches.createdAt));
 
     return {
       group,
