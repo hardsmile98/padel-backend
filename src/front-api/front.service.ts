@@ -263,7 +263,7 @@ export class FrontService {
       join players p3 on t2.player1_id = p3.id
       join players p4 on t2.player2_id = p4.id
       where m.group_id = ${group.id}
-      order by m.created_at asc
+      order by m.created_at desc
     `);
 
     const matches = rows.map((r) => ({

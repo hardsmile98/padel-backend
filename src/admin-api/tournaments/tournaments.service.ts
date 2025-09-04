@@ -189,14 +189,21 @@ export class TournamentsService {
   async addMatch(groupId: string, addMatchDto: AddMatchDto) {
     await this.dbService.db
       .insert(matches)
-      .values({ ...addMatchDto, groupId: +groupId })
+      .values({
+        ...addMatchDto,
+        groupId: +groupId,
+        winnerId: addMatchDto.winnerId ? +addMatchDto.winnerId : null,
+      })
       .execute();
   }
 
   async updateMatch(updateMatchDto: UpdateMatchDto) {
     await this.dbService.db
       .update(matches)
-      .set({ ...updateMatchDto })
+      .set({
+        ...updateMatchDto,
+        winnerId: updateMatchDto.winnerId ? +updateMatchDto.winnerId : null,
+      })
       .where(eq(matches.id, +updateMatchDto.matchId))
       .execute();
   }

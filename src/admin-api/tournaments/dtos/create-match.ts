@@ -17,6 +17,7 @@ export class AddMatchDto {
   @IsOptional()
   sets: string[];
 
+  @IsOptional()
   @IsNumber(
     { allowNaN: false, allowInfinity: false },
     { message: 'Победитель должен быть числом' },
