@@ -169,6 +169,10 @@ export class FrontService {
       .from(tournaments)
       .where(eq(tournaments.isActive, true));
 
+    if (!tournament) {
+      throw new NotFoundException('Турнир не найден');
+    }
+
     const allStages = await this.dbService.db
       .select()
       .from(stages)
