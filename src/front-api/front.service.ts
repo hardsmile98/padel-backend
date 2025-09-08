@@ -158,7 +158,8 @@ export class FrontService {
           players.id,
           activePlayerIds.map((p) => p.id),
         ),
-      );
+      )
+      .orderBy(asc(players.firstName), asc(players.lastName));
 
     return activePlayers;
   }

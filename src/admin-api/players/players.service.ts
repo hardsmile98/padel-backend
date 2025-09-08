@@ -1,7 +1,7 @@
 import { DbService } from '../../common/db';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PlayerDto } from './dtos';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, asc, eq, isNull } from 'drizzle-orm';
 import { players } from 'src/common/db/schema';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class PlayersService {
       .select()
       .from(players)
       .where(isNull(players.deletedAt))
-      .orderBy(desc(players.createdAt));
+      .orderBy(asc(players.firstName), asc(players.lastName));
 
     return activePlayers;
   }
