@@ -1,0 +1,2 @@
+ALTER TABLE "teams" ADD COLUMN "category_id" integer;--> statement-breakpoint
+ALTER TABLE "teams" ADD CONSTRAINT "teams_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;

@@ -101,6 +101,22 @@ export class TournamentsController {
     return this.tournamentsService.createTeam(groupId, createTeamDto);
   }
 
+  @Post('categories/:categoryId/create-team')
+  async createTeamByCategory(
+    @Param('categoryId') categoryId: string,
+    @Body() createTeamDto: CreateTeamDto,
+  ) {
+    return this.tournamentsService.createTeamByCategory(
+      categoryId,
+      createTeamDto,
+    );
+  }
+
+  @Get('categories/:categoryId/teams')
+  async getCategoryTeams(@Param('categoryId') categoryId: string) {
+    return this.tournamentsService.getCategoryTeams(categoryId);
+  }
+
   @Post('teams/:teamId/delete')
   async deleteTeam(@Param('teamId') teamId: string) {
     return this.tournamentsService.deleteTeam(teamId);

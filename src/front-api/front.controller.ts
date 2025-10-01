@@ -31,4 +31,9 @@ export class FrontController {
   async getGroupStatistics(@Param('groupId') groupId: string) {
     return this.frontService.getGroupStatistics(groupId);
   }
+
+  @Get('tournaments/categories/:categoryId')
+  async getCategoryStatistics(@Param('categoryId') categoryId: string) {
+    return this.frontService.getCategoryStatistics(categoryId);
+  }
 }

@@ -23,6 +23,7 @@ export const stages = pgTable('stages', {
   tournamentId: integer('tournament_id')
     .references(() => tournaments.id, { onDelete: 'cascade' })
     .notNull(),
+  isFinal: boolean('is_final').default(false).notNull(),
   name: varchar('name', { length: 255 }).notNull(),
   order: integer('order').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -64,7 +65,12 @@ export const teams = pgTable('teams', {
   id: serial('id').primaryKey(),
   groupId: integer('group_id')
     .references(() => groups.id, { onDelete: 'cascade' })
-    .notNull(),
+    .default(null),
+  categoryId: integer('category_id')
+    .references(() => categories.id, {
+      onDelete: 'cascade',
+    })
+    .default(null),
   player1Id: integer('player1_id')
     .references(() => players.id, { onDelete: 'cascade' })
     .notNull(),

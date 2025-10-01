@@ -144,6 +144,11 @@ export class TournamentsService {
     const player1 = alias(players, 'player1');
     const player2 = alias(players, 'player2');
 
+    const [stage] = await this.dbService.db
+      .select()
+      .from(stages)
+      .where(eq(stages.id, +group.stageId));
+
     const allTeams = await this.dbService.db
       .select({
         id: teams.id,
@@ -154,7 +159,11 @@ export class TournamentsService {
         createdAt: teams.createdAt,
       })
       .from(teams)
-      .where(eq(teams.groupId, +groupId))
+      .where(
+        stage.isFinal
+          ? eq(teams.categoryId, +group.categoryId)
+          : eq(teams.groupId, +groupId),
+      )
       .innerJoin(player1, eq(teams.player1Id, player1.id))
       .innerJoin(player2, eq(teams.player2Id, player2.id))
       .orderBy(asc(teams.createdAt));
@@ -167,6 +176,7 @@ export class TournamentsService {
 
     return {
       group,
+      stage,
       teams: allTeams,
       matches: allMatches,
     };
@@ -178,8 +188,43 @@ export class TournamentsService {
       .values({
         ...createTeamDto,
         groupId: +groupId,
+        categoryId: null,
       })
       .execute();
+  }
+  async createTeamByCategory(categoryId: string, createTeamDto: CreateTeamDto) {
+    await this.dbService.db
+      .insert(teams)
+      .values({
+        ...createTeamDto,
+        categoryId: +categoryId,
+        groupId: null,
+      })
+      .execute();
+  }
+
+  async getCategoryTeams(categoryId: string) {
+    const player1 = alias(players, 'player1');
+    const player2 = alias(players, 'player2');
+
+    const allTeams = await this.dbService.db
+      .select({
+        id: teams.id,
+        player1Id: teams.player1Id,
+        player2Id: teams.player2Id,
+        player1: player1,
+        player2: player2,
+        createdAt: teams.createdAt,
+      })
+      .from(teams)
+      .where(eq(teams.categoryId, +categoryId))
+      .innerJoin(player1, eq(teams.player1Id, player1.id))
+      .innerJoin(player2, eq(teams.player2Id, player2.id))
+      .orderBy(asc(teams.createdAt));
+
+    return {
+      teams: allTeams,
+    };
   }
 
   async deleteTeam(teamId: string) {

@@ -319,4 +319,141 @@ export class FrontService {
       teams: allTeams,
     };
   }
+
+  async getCategoryStatistics(categoryId: string) {
+    const [category] = await this.dbService.db
+      .select()
+      .from(categories)
+      .where(eq(categories.id, +categoryId));
+
+    if (!category) {
+      throw new NotFoundException('Категория не найдена');
+    }
+
+    const player1 = alias(players, 'player1');
+    const player2 = alias(players, 'player2');
+
+    const allTeams = await this.dbService.db
+      .select({
+        id: teams.id,
+        player1Id: teams.player1Id,
+        player2Id: teams.player2Id,
+        player1: player1,
+        player2: player2,
+        createdAt: teams.createdAt,
+      })
+      .from(teams)
+      .where(eq(teams.categoryId, category.id))
+      .innerJoin(player1, eq(teams.player1Id, player1.id))
+      .innerJoin(player2, eq(teams.player2Id, player2.id))
+      .orderBy(asc(teams.createdAt));
+
+    const allGroups = await this.dbService.db
+      .select()
+      .from(groups)
+      .where(eq(groups.categoryId, category.id));
+
+    const groupIds = allGroups.map((g) => g.id);
+
+    if (groupIds.length === 0) {
+      return {
+        category,
+        groups: allGroups,
+        teams: allTeams,
+        matches: [],
+      };
+    }
+
+    const { rows } = await this.dbService.db.execute(sql`
+        select
+          m.id as match_id,
+          m.group_id,
+          m.sets,
+          m.winner_id,
+          m.created_at,
+    
+          t1.id as team1_id,
+          p1.id as team1_p1_id,
+          p1.first_name as team1_p1_first,
+          p1.last_name as team1_p1_last,
+          p1.avatar_url as team1_p1_avatar,
+          p1.slug as team1_p1_slug,
+          p2.id as team1_p2_id,
+          p2.first_name as team1_p2_first,
+          p2.last_name as team1_p2_last,
+          p2.avatar_url as team1_p2_avatar,
+          p2.slug as team1_p2_slug,
+    
+          t2.id as team2_id,
+          p3.id as team2_p1_id,
+          p3.first_name as team2_p1_first,
+          p3.last_name as team2_p1_last,
+          p3.avatar_url as team2_p1_avatar,
+          p3.slug as team2_p1_slug,
+          p4.id as team2_p2_id,
+          p4.first_name as team2_p2_first,
+          p4.last_name as team2_p2_last,
+          p4.avatar_url as team2_p2_avatar,
+          p4.slug as team2_p2_slug
+    
+        from matches m
+        join teams t1 on m.team1_id = t1.id
+        join players p1 on t1.player1_id = p1.id
+        join players p2 on t1.player2_id = p2.id
+        join teams t2 on m.team2_id = t2.id
+        join players p3 on t2.player1_id = p3.id
+        join players p4 on t2.player2_id = p4.id
+        where m.group_id in (${sql.join(groupIds, sql`,`)})
+        order by m.created_at desc
+      `);
+
+    const matches = rows.map((r) => ({
+      id: r.match_id,
+      groupId: r.group_id,
+      sets: r.sets,
+      winnerId: r.winner_id,
+      createdAt: r.created_at,
+      team1: {
+        id: r.team1_id,
+        player1: {
+          id: r.team1_p1_id,
+          firstName: r.team1_p1_first,
+          lastName: r.team1_p1_last,
+          avatarUrl: r.team1_p1_avatar,
+          slug: r.team1_p1_slug,
+        },
+        player2: {
+          id: r.team1_p2_id,
+          firstName: r.team1_p2_first,
+          lastName: r.team1_p2_last,
+          avatarUrl: r.team1_p2_avatar,
+          slug: r.team1_p2_slug,
+        },
+      },
+      team2: {
+        id: r.team2_id,
+        player1: {
+          id: r.team2_p1_id,
+          firstName: r.team2_p1_first,
+          lastName: r.team2_p1_last,
+          avatarUrl: r.team2_p1_avatar,
+          slug: r.team2_p1_slug,
+        },
+        player2: {
+          id: r.team2_p2_id,
+          firstName: r.team2_p2_first,
+          lastName: r.team2_p2_last,
+          avatarUrl: r.team2_p2_avatar,
+          slug: r.team2_p2_slug,
+        },
+      },
+    }));
+
+    return {
+      category,
+      groups: allGroups,
+      teams: allTeams,
+      matches,
+    };
+  }
 }

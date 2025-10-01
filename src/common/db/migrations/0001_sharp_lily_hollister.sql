@@ -1,0 +1,1 @@
+ALTER TABLE "stages" ADD COLUMN "is_final" boolean DEFAULT false NOT NULL;
