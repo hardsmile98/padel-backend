@@ -117,6 +117,7 @@ export const matches = pgTable(
     winnerId: integer('winner_id').references(() => teams.id, {
       onDelete: 'set null',
     }),
+    order: integer('order').notNull().default(0),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [index('idx_matches_group_id').on(table.groupId)],

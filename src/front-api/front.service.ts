@@ -268,7 +268,7 @@ export class FrontService {
       join players p3 on t2.player1_id = p3.id
       join players p4 on t2.player2_id = p4.id
       where m.group_id = ${group.id}
-      order by m.created_at desc
+      order by m.order asc, m.created_at desc
     `);
 
     const matches = rows.map((r) => ({
@@ -330,24 +330,6 @@ export class FrontService {
       throw new NotFoundException('Категория не найдена');
     }
 
-    const player1 = alias(players, 'player1');
-    const player2 = alias(players, 'player2');
-
-    const allTeams = await this.dbService.db
-      .select({
-        id: teams.id,
-        player1Id: teams.player1Id,
-        player2Id: teams.player2Id,
-        player1: player1,
-        player2: player2,
-        createdAt: teams.createdAt,
-      })
-      .from(teams)
-      .where(eq(teams.categoryId, category.id))
-      .innerJoin(player1, eq(teams.player1Id, player1.id))
-      .innerJoin(player2, eq(teams.player2Id, player2.id))
-      .orderBy(asc(teams.createdAt));
-
     const allGroups = await this.dbService.db
       .select()
       .from(groups)
@@ -359,7 +341,6 @@ export class FrontService {
       return {
         category,
         groups: allGroups,
-        teams: allTeams,
         matches: [],
       };
     }
@@ -404,7 +385,7 @@ export class FrontService {
         join players p3 on t2.player1_id = p3.id
         join players p4 on t2.player2_id = p4.id
         where m.group_id in (${sql.join(groupIds, sql`,`)})
-        order by m.created_at desc
+        order by m.order asc, m.created_at desc
       `);
 
     const matches = rows.map((r) => ({
@@ -452,7 +433,6 @@ export class FrontService {
     return {
       category,
       groups: allGroups,
-      teams: allTeams,
       matches,
     };
   }

@@ -23,4 +23,11 @@ export class AddMatchDto {
     { message: 'Победитель должен быть числом' },
   )
   winnerId: number;
+
+  @IsOptional()
+  @IsNumber(
+    { allowNaN: false, allowInfinity: false },
+    { message: 'Порядок должен быть числом' },
+  )
+  order: number;
 }
