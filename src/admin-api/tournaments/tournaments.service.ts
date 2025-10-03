@@ -19,7 +19,7 @@ import {
   SetActiveStageDto,
   UpdateMatchDto,
 } from './dtos';
-import { asc, desc, eq } from 'drizzle-orm';
+import { asc, desc, eq, and, isNull } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 @Injectable()
@@ -134,7 +134,7 @@ export class TournamentsService {
     return { message: 'Группа создана' };
   }
 
-  async getGroup(groupId: string) {
+  async getGroup(groupId: string, type: string) {
     const [group] = await this.dbService.db
       .select()
       .from(groups)
@@ -160,9 +160,12 @@ export class TournamentsService {
       })
       .from(teams)
       .where(
-        stage.isFinal
-          ? eq(teams.categoryId, +group.categoryId)
-          : eq(teams.groupId, +groupId),
+        and(
+          stage.isFinal
+            ? eq(teams.categoryId, +group.categoryId)
+            : eq(teams.groupId, +groupId),
+          type ? eq(teams.type, type) : isNull(teams.type),
+        ),
       )
       .innerJoin(player1, eq(teams.player1Id, player1.id))
       .innerJoin(player2, eq(teams.player2Id, player2.id))
@@ -171,7 +174,12 @@ export class TournamentsService {
     const allMatches = await this.dbService.db
       .select()
       .from(matches)
-      .where(eq(matches.groupId, +groupId))
+      .where(
+        and(
+          eq(matches.groupId, +groupId),
+          type ? eq(matches.type, type) : isNull(matches.type),
+        ),
+      )
       .orderBy(asc(matches.order), desc(matches.createdAt));
 
     return {
@@ -203,7 +211,7 @@ export class TournamentsService {
       .execute();
   }
 
-  async getCategoryTeams(categoryId: string) {
+  async getCategoryTeams(categoryId: string, type: string) {
     const player1 = alias(players, 'player1');
     const player2 = alias(players, 'player2');
 
@@ -217,7 +225,12 @@ export class TournamentsService {
         createdAt: teams.createdAt,
       })
       .from(teams)
-      .where(eq(teams.categoryId, +categoryId))
+      .where(
+        and(
+          eq(teams.categoryId, +categoryId),
+          type ? eq(teams.type, type) : isNull(teams.type),
+        ),
+      )
       .innerJoin(player1, eq(teams.player1Id, player1.id))
       .innerJoin(player2, eq(teams.player2Id, player2.id))
       .orderBy(asc(teams.createdAt));

@@ -1,4 +1,4 @@
-import { IsArray, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class AddMatchDto {
   @IsNumber(
@@ -30,4 +30,8 @@ export class AddMatchDto {
     { message: 'Порядок должен быть числом' },
   )
   order: number;
+
+  @IsOptional()
+  @IsString({ message: 'Тип должно быть строкой' })
+  type: string;
 }

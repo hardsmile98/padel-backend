@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import {
   AddMatchDto,
@@ -89,8 +89,11 @@ export class TournamentsController {
   }
 
   @Get('groups/:groupId')
-  async getGroup(@Param('groupId') groupId: string) {
-    return this.tournamentsService.getGroup(groupId);
+  async getGroup(
+    @Param('groupId') groupId: string,
+    @Query('type') type: string,
+  ) {
+    return this.tournamentsService.getGroup(groupId, type);
   }
 
   @Post('groups/:groupId/create-team')
@@ -113,8 +116,11 @@ export class TournamentsController {
   }
 
   @Get('categories/:categoryId/teams')
-  async getCategoryTeams(@Param('categoryId') categoryId: string) {
-    return this.tournamentsService.getCategoryTeams(categoryId);
+  async getCategoryTeams(
+    @Param('categoryId') categoryId: string,
+    @Query('type') type: string,
+  ) {
+    return this.tournamentsService.getCategoryTeams(categoryId, type);
   }
 
   @Post('teams/:teamId/delete')

@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTeamDto {
   @IsNumber(
@@ -12,4 +12,8 @@ export class CreateTeamDto {
     { message: 'Родительская категория должна быть числом' },
   )
   player2Id: number;
+
+  @IsOptional()
+  @IsString({ message: 'Тип команды должно быть строкой' })
+  type?: string;
 }

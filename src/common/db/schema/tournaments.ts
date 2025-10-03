@@ -89,6 +89,7 @@ export const teams = pgTable(
         onDelete: 'cascade',
       })
       .default(null),
+    type: varchar('type', { length: 16 }).default(null),
     player1Id: integer('player1_id')
       .references(() => players.id, { onDelete: 'cascade' })
       .notNull(),
@@ -97,7 +98,10 @@ export const teams = pgTable(
       .notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => [index('idx_teams_group_id').on(table.groupId)],
+  (table) => [
+    index('idx_teams_group_id').on(table.groupId),
+    index('idx_teams_category_id_type').on(table.categoryId, table.type),
+  ],
 );
 
 export const matches = pgTable(
@@ -107,6 +111,7 @@ export const matches = pgTable(
     groupId: integer('group_id')
       .references(() => groups.id, { onDelete: 'cascade' })
       .notNull(),
+    type: varchar('type', { length: 16 }).default(null),
     team1Id: integer('team1_id')
       .references(() => teams.id, { onDelete: 'cascade' })
       .notNull(),
@@ -120,5 +125,5 @@ export const matches = pgTable(
     order: integer('order').notNull().default(0),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => [index('idx_matches_group_id').on(table.groupId)],
+  (table) => [index('idx_matches_group_id_type').on(table.groupId, table.type)],
 );

@@ -350,6 +350,7 @@ export class FrontService {
           m.id as match_id,
           m.group_id,
           m.sets,
+          m.type,
           m.winner_id,
           m.created_at,
     
@@ -394,6 +395,7 @@ export class FrontService {
       sets: r.sets,
       winnerId: r.winner_id,
       createdAt: r.created_at,
+      type: r.type,
       team1: {
         id: r.team1_id,
         player1: {
